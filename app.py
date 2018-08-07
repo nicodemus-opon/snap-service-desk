@@ -32,13 +32,15 @@ app.debug = True
 def jira_login(servo="",user_name_="",password=""):
     try:    
         options = {'server': servo}
-        jira = JIRA(options, basic_auth=(user_name_,password ))
+        jira = JIRA(options, basic_auth=(user_name_,password))
         if jira:
             return(True)
         else:
+            print("legit false....")
             return(False)
     except Exception as e:
-        #print(e)
+        print("exceptioning....")
+        print(e)
         return(False)
 
 
@@ -168,25 +170,32 @@ def login():
         username = request.form['username']
         password = request.form['password']
         servo = request.form['server']
-        session['_servo_'] =username
-        session['_user_name_'] =password
-        session['_password_'] =servo
+        session['_servo_'] =servo
+        session['_user_name_'] =username
+        session['_password_'] =password
+        print(str(session['_servo_']))
+        print(str(session['_user_name_']))
+        print(str(session['_password_']))
         log_in=jira_login(servo=session['_servo_'],user_name_=session['_user_name_'],password=session['_password_'])
+        print(str(log_in))
+
         print("got post req")
-        if log_in == 1:
+        if log_in == True:
             session['logged_in'] = True
+            print("yebooo")
             return render_template('index.html')
-        elif log_in == 0:
+        elif log_in == False:
             # session['logged_in']=False
+            print("login failed")
             return render_template('login.html')
     else:
-        log_in=jira_login(servo=session['_servo_'],user_name_=session['_user_name_'],password=session['_password_'])
-        if log_in == 1:
-            session['logged_in'] = True
-            return render_template('index.html')
-        elif log_in == 0:
+        #log_in=jira_login(servo=session['_servo_'],user_name_=session['_user_name_'],password=session['_password_'])
+##        if log_in == 1:
+##            session['logged_in'] = True
+##            return render_template('index.html')
+##        elif log_in == 0:
             # session['logged_in']=False
-            return render_template('login.html')
+        return render_template('login.html')
 
 
 if __name__ == '__main__':
