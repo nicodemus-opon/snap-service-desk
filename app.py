@@ -17,7 +17,7 @@ access_token_secret = "SFaW44avqYqcZRGnIStuQmS8m4QL0F9wXrNmstytpBrDO"
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
-#loggin in to mail
+# loggin in to mail
 server = smtplib.SMTP('smtp.gmail.com', 587)
 server.starttls()
 server.login("cbsoftlabke@gmail.com", "blacksaint")
@@ -25,16 +25,18 @@ server.login("cbsoftlabke@gmail.com", "blacksaint")
 app = Flask(__name__)
 app.secret_key = "nico"
 app.debug = True
-def send_mail(toaddr="",body = "",fromaddr = "Snap Service Desk"):
-    #msg = str("From:",fromaddr,"To",toaddr,"Subject","SUBJECT OF THE MAIL",boddy)
-    msg=str(body)
+
+
+def send_mail(toaddr="", body="", fromaddr="Snap Service Desk"):
+    # msg = str("From:",fromaddr,"To",toaddr,"Subject","SUBJECT OF THE MAIL",boddy)
+    msg = str(body)
     text = msg
     server.sendmail(fromaddr, toaddr, text)
     server.quit()
     print("complete")
 
 
-def search(max_tweets=100,query=""):
+def search(max_tweets=100, query=""):
     global array_of_ids
     global array_of_comments
     global array_of_time
@@ -49,25 +51,25 @@ def search(max_tweets=100,query=""):
     array_of_subs = []
     array_of_avgs = []
     array_of_dates = []
-    array_of_names=[]
+    array_of_names = []
 
     array_of_ids = []
     array_of_comments = []
     array_of_time = []
     array_of_date = []
     array_of_polarity = []
-    array_of_colors=[]
-    
+    array_of_colors = []
+
     searched_tweets = [status for status in tweepy.Cursor(api.search, q=query).items(max_tweets)]
     try:
         for z in searched_tweets:
             try:
                 time_created = z.created_at
                 time_created_2 = str(time_created.date().strftime("%a-%d-%m-%y"))
-                #print(time_created_2)
-                #print(z.text)
+                # print(time_created_2)
+                # print(z.text)
                 wiki = TextBlob(z.text)
-                #print(wiki.sentiment.polarity)
+                # print(wiki.sentiment.polarity)
                 if wiki.sentiment.polarity != 0.0:
                     if wiki.sentiment.polarity > 0:
                         pass
@@ -83,23 +85,24 @@ def search(max_tweets=100,query=""):
                         array_of_time.append(str(time_created.time()))
                         array_of_date.append(str(time_created.date()))
                         pp = ""
-                        array_of_polarity.append(str(float("{0:.2f}".format((1 + wiki.sentiment.polarity) * 50))) + " % negative")
+                        array_of_polarity.append(
+                            str(float("{0:.2f}".format((1 + wiki.sentiment.polarity) * 50))) + " % negative")
                         array_of_colors.append("table-danger")
-                        send_mail(toaddr=user_name,body = wiki)
+                        send_mail(toaddr=user_name, body=wiki)
                         # array_of_subs.append(wiki.sentiment.subjectivity)
                         # avgs=float((wiki.sentiment.polarity + wiki.sentiment.subjectivity)/2)
                         # array_of_avgs.append(avgs)
-                        
+
             except Exception as g:
-                #print(g)
+                # print(g)
                 continue
     except Exception as e:
         pass
-        #print(e)
+        # print(e)
 
     x = 0.0
-    #print(len(array_of_names))
-    #print(len(array_of_stuff))
+    # print(len(array_of_names))
+    # print(len(array_of_stuff))
     try:
         for zy in array_of_stuff:
             zy += x
@@ -117,18 +120,20 @@ def search(max_tweets=100,query=""):
         array_of_ids = [de for de in range(len(x_plot))]
         return (y_plot, x_plot)
     except Exception as d:
-        #print(d)
+        # print(d)
         pass
-    ##plt.plot([list(reversed(array_of_dates))[0],list(reversed(array_of_dates))[-1]],[list(reversed(array_of_stuff))[0],list(reversed(array_of_stuff))[-1]],color="green")
-    ##plt.plot(range(len(array_of_subs)),array_of_subs,color="red")
-    ##plt.plot(range(len(array_of_avgs)),array_of_avgs,color="green")
-    ##plt.show()
-#search()
+        ##plt.plot([list(reversed(array_of_dates))[0],list(reversed(array_of_dates))[-1]],[list(reversed(array_of_stuff))[0],list(reversed(array_of_stuff))[-1]],color="green")
+        ##plt.plot(range(len(array_of_subs)),array_of_subs,color="red")
+        ##plt.plot(range(len(array_of_avgs)),array_of_avgs,color="green")
+        ##plt.show()
+
+
+# search()
 
 def is_logged_in(f):
     @wraps(f)
     def wrap(*args, **kwargs):
-        if session['logged_in'] ==True:
+        if 'logged_in' in session:
             return f(*args, **kwargs)
         else:
             return redirect(url_for('login'))
@@ -144,10 +149,14 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if True:
-        session['logged_in']=True
+    x = 0
+    if x == 1:
+        session['logged_in'] = True
         return render_template('index.html')
+    elif x == 0:
+        # session['logged_in']=False
+        return render_template('login.html')
 
 
 if __name__ == '__main__':
-    app.run(debug=True,host='0.0.0.0', port= 8090)
+    app.run(debug=True, host='0.0.0.0', port=8090)
