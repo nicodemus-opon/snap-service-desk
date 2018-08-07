@@ -7,6 +7,8 @@ from textblob import TextBlob
 import numpy as np
 import pandas as pd
 from datetime import *
+import jira.client
+from jira.client import JIRA
 
 consumer_key = "w1OfpL5GIeSEzQWAQbVRIrFvU"
 consumer_secret = "iVrMsBaaIlCudtKiIhPBVu3onllfPuleGNoRxwJGHCj0agjtbT"
@@ -27,8 +29,21 @@ app.secret_key = "nico"
 app.debug = True
 
 
+def jira_login(servo="",user_name_="",password=""):
+    try:    
+        options = {'server': servo}
+        jira = JIRA(options, basic_auth=(user_name_,password ))
+        if jira:
+            return(True)
+        else:
+            return(False)
+    except Exception as e:
+        #print(e)
+        return(False)
+
+
 def send_mail(toaddr="", body="", fromaddr="Snap Service Desk"):
-    # msg = str("From:",fromaddr,"To",toaddr,"Subject","SUBJECT OF THE MAIL",boddy)
+    # msg = str("From:",fromaddr,"To",toaddr,"Subject","SUBJECT OF THE MAIL", boddy)
     msg = str(body)
     text = msg
     server.sendmail(fromaddr, toaddr, text)
@@ -149,13 +164,29 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    x = 0
-    if x == 1:
-        session['logged_in'] = True
-        return render_template('index.html')
-    elif x == 0:
-        # session['logged_in']=False
-        return render_template('login.html')
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        servo = request.form['server']
+        session['_servo_'] =username
+        session['_user_name_'] =password
+        session['_password_'] =servo
+        log_in=jira_login(servo=session['_servo_'],user_name_=session['_user_name_'],password=session['_password_'])
+        print("got post req")
+        if log_in == 1:
+            session['logged_in'] = True
+            return render_template('index.html')
+        elif log_in == 0:
+            # session['logged_in']=False
+            return render_template('login.html')
+    else:
+        log_in=jira_login(servo=session['_servo_'],user_name_=session['_user_name_'],password=session['_password_'])
+        if log_in == 1:
+            session['logged_in'] = True
+            return render_template('index.html')
+        elif log_in == 0:
+            # session['logged_in']=False
+            return render_template('login.html')
 
 
 if __name__ == '__main__':
