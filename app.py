@@ -25,7 +25,7 @@ server.login("cbsoftlabke@gmail.com", "blacksaint")
 app = Flask(__name__)
 app.secret_key = "nico"
 app.debug = True
-def send_mail(toaddr="",body = "",fromaddr = "cbsoftlabke@gmail.com"):
+def send_mail(toaddr="",body = "",fromaddr = "Snap Service Desk"):
     #msg = str("From:",fromaddr,"To",toaddr,"Subject","SUBJECT OF THE MAIL",boddy)
     msg=str(body)
     text = msg
@@ -128,7 +128,7 @@ def search(max_tweets=100,query=""):
 def is_logged_in(f):
     @wraps(f)
     def wrap(*args, **kwargs):
-        if 'logged_in' in session:
+        if session['logged_in'] ==True:
             return f(*args, **kwargs)
         else:
             return redirect(url_for('login'))
@@ -145,7 +145,8 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if True:
-        return render_template('login.html', error=error)
+        session['logged_in']=True
+        return render_template('index.html')
 
 
 if __name__ == '__main__':
