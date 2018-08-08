@@ -21,17 +21,17 @@
         <div></div>
         <div class="card">
           <div class="card-body">
-            <div class="alert alert-light alert-dismissible fade show" role="alert">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
               <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
               <strong>¯\_(ツ)_/¯</strong> Sentiments gotten will appear here
             </div>
-            {% for i in range(session["mentions"]) -%}
-            <div class="alert alert-light alert-dismissible fade show" role="alert">
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
+            {% for i in range(session["mentions_len"]) -%}
+            <div class="alert alert-transparent alert-dismissible fade show" role="alert">
+              <button type="button" class="close " data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true" class="danger">&times;</span>
+              </button><i class="fa fa-twitter"></i>
               {{ session["mentions"][i] }}
             </div>
             {%- endfor %}
@@ -50,7 +50,7 @@
                     <i class="fa fa-user"></i>
                   </div>
                 </div>
-                <input type="text" class="form-control" aria-label="Text input with checkbox" placeholder="Your service desk Address" value="{{request.form.service_email}}">
+                <input type="text" class="form-control" name="service_email" aria-label="Text input with checkbox" placeholder="Your service desk Address" value="{{request.form.service_email}}">
               </div>
               <div class="input-group input-group-seamless">
                 <div class="input-group-prepend">
@@ -58,11 +58,11 @@
                     <i class="fa fa-address-card-o"></i>
                   </div>
                 </div>
-                <input type="text" class="form-control" aria-label="Text input with checkbox" placeholder="Search term" value="{{request.form.search_term}}">
+                <input type="text" name="search_term" class="form-control" aria-label="Text input with checkbox" placeholder="Search term" value="{{request.form.search_term}}">
               </div>
               <div>
                 <!-- Normal Custom Select -->
-                <input type="text" class="form-control" placeholder="Volume of sentiments to go through" value="{{request.form.search_volume}}">
+                <input type="number"  name="search_volume" class="form-control" placeholder="Volume of sentiments" value="{{request.form.search_volume}}">
               </div>
 
               <div>
