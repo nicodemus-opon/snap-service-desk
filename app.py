@@ -10,19 +10,26 @@ from datetime import *
 import jira.client
 from jira.client import JIRA
 
-consumer_key = "w1OfpL5GIeSEzQWAQbVRIrFvU"
-consumer_secret = "iVrMsBaaIlCudtKiIhPBVu3onllfPuleGNoRxwJGHCj0agjtbT"
-access_token = "1004781338841493505-vxy3uLUWSO3sL3Up4HllTg9djN4NdM"
-access_token_secret = "SFaW44avqYqcZRGnIStuQmS8m4QL0F9wXrNmstytpBrDO"
+while True:
+    try:
+        consumer_key = "w1OfpL5GIeSEzQWAQbVRIrFvU"
+        consumer_secret = "iVrMsBaaIlCudtKiIhPBVu3onllfPuleGNoRxwJGHCj0agjtbT"
+        access_token = "1004781338841493505-vxy3uLUWSO3sL3Up4HllTg9djN4NdM"
+        access_token_secret = "SFaW44avqYqcZRGnIStuQmS8m4QL0F9wXrNmstytpBrDO"
 
-## set up an instance of Tweepy
-auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_token, access_token_secret)
-api = tweepy.API(auth)
-# loggin in to mail
-server = smtplib.SMTP('smtp.gmail.com', 587)
-server.starttls()
-server.login("cbsoftlabke@gmail.com", "blacksaint")
+        ## set up an instance of Tweepy
+        auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+        auth.set_access_token(access_token, access_token_secret)
+        api = tweepy.API(auth)
+        # login in to mail
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login("cbsoftlabke@gmail.com", "blacksaint")
+        print("initialization issa success")
+        break
+    except Exception as e:
+        print("initialization issa failure")
+        print(e)
 
 app = Flask(__name__)
 app.secret_key = "nico"
@@ -53,7 +60,7 @@ def send_mail(toaddr="", body="", fromaddr="Snap Service Desk"):
     print("complete")
 
 
-def search(max_tweets=100, query=""):
+def search(max_tweets=100, query="",email_):
     global array_of_ids
     global array_of_comments
     global array_of_time
@@ -161,7 +168,13 @@ def is_logged_in(f):
 @app.route('/', methods=['GET', 'POST'])
 @is_logged_in
 def index():
-    return (render_template('index.html'))
+    if request.method == 'POST':
+        mail=request.form['service_email']
+        tag_to_search=request.form['search_term']
+        volume_of_search=request.form['username']
+        session["mentions"]=
+    else:
+        return (render_template('index.html'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -183,7 +196,7 @@ def login():
         if log_in == True:
             session['logged_in'] = True
             print("yebooo")
-            return render_template('index.html')
+            return redirect('/')
         elif log_in == False:
             # session['logged_in']=False
             print("login failed")
@@ -199,4 +212,5 @@ def login():
 
 
 if __name__ == '__main__':
+    session["mentions"]=[]
     app.run(debug=True, host='0.0.0.0', port=8090)
